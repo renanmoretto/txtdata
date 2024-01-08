@@ -32,7 +32,7 @@ class TxtData:
 
     @property
     def empty(self) -> bool:
-        return bool(self.data)
+        return not bool(self.data)
 
     @property
     def fields(self) -> list[str]:
@@ -77,8 +77,16 @@ class TxtData:
         data = cls._txt_to_dict(lines, delimiter)
         return cls(data, delimiter)
 
+    def _format_new_data(self, data: DataDict) -> DataDict:
+        """Adds missing fields (txt fields) in new data."""
+        data = data.copy()
+        missing_fields = [field for field in self.fields if field not in data.keys()]
+        for field in missing_fields:
+            data.update({field: None})
+        return data
+
     def _insert_single_data(self, data: DataDict):
-        new_data = data.copy()
+        new_data = self._format_new_data(data)
         data_fields = list(data.keys())
         new_fields = [field for field in data_fields if field not in self.fields]
 
@@ -99,24 +107,34 @@ class TxtData:
             data = kwargs.copy()
         self._insert_single_data(data)
 
-    def insert(self, data: DataDict | list[DataDict]):
+    def insert(
+        self,
+        data: DataDict | list[DataDict] | None = None,
+        /,
+        **kwargs: DataDict,
+    ):
         """Inserts new data into the object"""
-        if isinstance(data, list):
+        if data is not None and kwargs:
+            raise ValueError('pass data or keyword data, both are not allowed')
+
+        if data is None:
+            data = kwargs.copy()
+
+        if isinstance(data, dict):
+            self._insert_single_data(data)
+        # elif isinstance(data, list):
+        else:
             for single_data in data:
                 self._insert_single_data(single_data)
-        else:
-            self._insert_single_data(data)
 
     def to_txt(self) -> list[str]:
         return self._data_to_txt(self.data, self.delimiter)
 
     def save(self, path: Path):
-        # TODO
-        ...
+        if not path.is_file():
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.touch(exist_ok=True)
 
-
-def _ensure_file(file_path: Path):
-    """Create file if not exists"""
-    if not file_path.is_file():
-        file_path.parent.mkdir(parents=True, exist_ok=True)
-        file_path.touch(exist_ok=True)
+        txt_data = self._data_to_txt(self.data, self.delimiter)
+        with open(path, 'w') as file:
+            file.writelines(txt_data)
