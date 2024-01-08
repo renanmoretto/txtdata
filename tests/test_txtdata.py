@@ -13,7 +13,17 @@ class TestTxtData(unittest.TestCase):
         txt.insert({'A': 123})
         txt.insert({'B': 111})
         txt.insert({'A': 182, 'C': 'das'})
-        print(txt.data)
+        assert txt.data == [
+            {'A': 123, 'B': None, 'C': None},
+            {'A': None, 'B': 111, 'C': None},
+            {'A': 182, 'B': None, 'C': 'das'},
+        ]
+
+    def test_insert_keyword(self):
+        txt = TxtData()
+        txt.insert(A=123)
+        txt.insert(B=111)
+        txt.insert(A=182, C='das')
         assert txt.data == [
             {'A': 123, 'B': None, 'C': None},
             {'A': None, 'B': 111, 'C': None},

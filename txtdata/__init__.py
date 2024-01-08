@@ -112,24 +112,19 @@ class TxtData:
 
         self.data.append(new_data)
 
-    def _insert(self, __data: DataDict | None = None, /, **kwargs: DataDict):
-        if __data is not None:
-            data = __data.copy()
-        else:
-            data = kwargs.copy()
-        self._insert_single_data(data)
-
     def insert(
         self,
-        data: DataDict | list[DataDict] | None = None,
+        __data: DataDict | list[DataDict] | None = None,
         /,
         **kwargs: Any,
     ):
         """Inserts new data into the object"""
-        if data is not None and kwargs:
+        if __data is not None and kwargs:
             raise ValueError('pass data or keyword data, both are not allowed')
 
-        if data is None:
+        if __data is not None:
+            data = __data.copy()
+        else:
             data = kwargs.copy()
 
         if isinstance(data, dict):
