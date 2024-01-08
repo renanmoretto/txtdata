@@ -44,7 +44,9 @@ class TxtData:
         return len(self.data)
 
     @staticmethod
-    def _txt_to_dict(txt_lines: list[str], delimiter: str = _DEFAULT_DELIMITER) -> list[DataDict]:
+    def _txt_to_dict(
+        txt_lines: list[str], delimiter: str = _DEFAULT_DELIMITER
+    ) -> list[DataDict]:
         fields = txt_lines[0].strip().split(delimiter)
         data: list[DataDict] = []
         for line in txt_lines[1:]:
@@ -56,18 +58,24 @@ class TxtData:
         return data
 
     @staticmethod
-    def _data_to_txt(data: list[DataDict], delimiter: str = _DEFAULT_DELIMITER) -> list[str]:
+    def _data_to_txt(
+        data: list[DataDict], delimiter: str = _DEFAULT_DELIMITER
+    ) -> list[str]:
         fields = list(data[0].keys())
         txt_header = f'{delimiter}'.join(fields) + '\n'
         txt_lines = [txt_header]
         for data_slice in data:
-            row_values = [str(v) if v is not None else '' for v in data_slice.values()]
+            row_values = [
+                str(v) if v is not None else '' for v in data_slice.values()
+            ]
             row = f'{delimiter}'.join(row_values) + '\n'
             txt_lines.append(row)
         return txt_lines
 
     @classmethod
-    def from_path(cls, path: Path, delimiter: str = _DEFAULT_DELIMITER) -> 'TxtData':
+    def from_path(
+        cls, path: Path, delimiter: str = _DEFAULT_DELIMITER
+    ) -> 'TxtData':
         if path.suffix != '.txt':
             raise ValueError('Path suffix must be .txt')
 
@@ -80,7 +88,9 @@ class TxtData:
     def _format_new_data(self, data: DataDict) -> DataDict:
         """Adds missing fields (txt fields) in new data."""
         data = data.copy()
-        missing_fields = [field for field in self.fields if field not in data.keys()]
+        missing_fields = [
+            field for field in self.fields if field not in data.keys()
+        ]
         for field in missing_fields:
             data.update({field: None})
         return data
@@ -88,7 +98,9 @@ class TxtData:
     def _insert_single_data(self, data: DataDict):
         new_data = self._format_new_data(data)
         data_fields = list(data.keys())
-        new_fields = [field for field in data_fields if field not in self.fields]
+        new_fields = [
+            field for field in data_fields if field not in self.fields
+        ]
 
         has_new_fields = bool(new_fields)
 
@@ -111,7 +123,7 @@ class TxtData:
         self,
         data: DataDict | list[DataDict] | None = None,
         /,
-        **kwargs: DataDict,
+        **kwargs: Any,
     ):
         """Inserts new data into the object"""
         if data is not None and kwargs:
