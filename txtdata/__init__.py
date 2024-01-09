@@ -1,13 +1,12 @@
 from copy import deepcopy
 from pathlib import Path
-from typing import TypeVar, Any
+from typing import Any
 
 
 _DEFAULT_DELIMITER = ';'
 
-T = TypeVar('T')
-DataDict = dict[str, Any]
-DataLike = dict[str, Any] | list[dict[str, Any]]
+_DataDict = dict[str, Any]
+_DataLike = dict[str, Any] | list[dict[str, Any]]
 
 
 class TxtData:
@@ -24,10 +23,10 @@ class TxtData:
 
     def __init__(
         self,
-        data: list[DataDict] | None = None,
+        data: list[_DataDict] | None = None,
         delimiter: str = _DEFAULT_DELIMITER,
     ):
-        self.data: list[DataDict] = data.copy() if data else []
+        self.data: list[_DataDict] = data.copy() if data else []
         self.delimiter: str = delimiter
 
     @property
@@ -44,7 +43,7 @@ class TxtData:
         return len(self.data)
 
     @staticmethod
-    def _parse_data(data: DataLike) -> DataLike:
+    def _parse_data(data: _DataLike) -> _DataLike:
         """Verify data type and return a copy if valid"""
         if isinstance(data, (dict, list)):  # type: ignore
             return data.copy()
@@ -54,9 +53,9 @@ class TxtData:
     @staticmethod
     def _txt_to_dict(
         txt_lines: list[str], delimiter: str = _DEFAULT_DELIMITER
-    ) -> list[DataDict]:
+    ) -> list[_DataDict]:
         fields = txt_lines[0].strip().split(delimiter)
-        data: list[DataDict] = []
+        data: list[_DataDict] = []
         for line in txt_lines[1:]:
             values = line.strip().split(delimiter)
             row_dict = {}
@@ -67,7 +66,7 @@ class TxtData:
 
     @staticmethod
     def _data_to_txt(
-        data: list[DataDict], delimiter: str = _DEFAULT_DELIMITER
+        data: list[_DataDict], delimiter: str = _DEFAULT_DELIMITER
     ) -> list[str]:
         fields = list(data[0].keys())
         txt_header = f'{delimiter}'.join(fields) + '\n'
@@ -93,7 +92,7 @@ class TxtData:
         data = cls._txt_to_dict(lines, delimiter)
         return cls(data, delimiter)
 
-    def _format_new_data(self, data: DataDict) -> DataDict:
+    def _format_new_data(self, data: _DataDict) -> _DataDict:
         """Adds missing fields (txt fields) in new data."""
         data = data.copy()
         missing_fields = [
@@ -106,7 +105,7 @@ class TxtData:
     def copy(self) -> 'TxtData':
         return deepcopy(self)
 
-    def _insert_single_data(self, data: DataDict):
+    def _insert_single_data(self, data: _DataDict):
         new_data = self._format_new_data(data)
         data_fields = list(data.keys())
         new_fields = [
@@ -144,9 +143,9 @@ class TxtData:
                 self._insert_single_data(single_data)
 
     def filter(self, **kwargs: Any) -> 'TxtData':
-        filtered_data: list[DataDict] = []
+        filtered_data: list[_DataDict] = []
         for key, value in kwargs.items():
-            filtered_data_by_key: list[DataDict] = [
+            filtered_data_by_key: list[_DataDict] = [
                 d for d in self.data if d[key] == value
             ]
             filtered_data.extend(filtered_data_by_key)
