@@ -21,6 +21,16 @@ class TestTxtData(unittest.TestCase):
         txt = TxtData()
         assert txt.empty
 
+    def test_len(self):
+        data = _random_sample(50)
+        txt = TxtData(data)
+        assert len(txt) == 50
+
+    def test_fields(self):
+        data = _random_sample(50)
+        txt = TxtData(data)
+        assert txt.fields == ['A', 'B', 'C']
+
     def test_insert_dict(self):
         txt = TxtData()
         txt.insert({'A': 123})
