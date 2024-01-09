@@ -7,6 +7,7 @@ _DEFAULT_DELIMITER = ';'
 
 T = TypeVar('T')
 DataDict = dict[str, Any]
+DataLike = dict[str, Any] | list[dict[str, Any]]
 
 
 class TxtData:
@@ -41,6 +42,14 @@ class TxtData:
 
     def __len__(self):
         return len(self.data)
+
+    @staticmethod
+    def _parse_data(data: DataLike) -> DataLike:
+        """Verify data type and return a copy if valid"""
+        if isinstance(data, (dict, list)):  # type: ignore
+            return data.copy()
+        else:
+            raise TypeError('data must be a dict, a list of dicts, or None')
 
     @staticmethod
     def _txt_to_dict(
@@ -121,13 +130,10 @@ class TxtData:
         **kwargs: Any,
     ):
         """Inserts new data into the object"""
-        if __data is not None and kwargs:
-            raise ValueError('keyword data not allowed if data was passed.')
-        if __data is not None and not isinstance(__data, (dict, list)):
-            raise TypeError('if passed, data must be dict or list of dicts')
-
         if __data is not None:
-            data = __data.copy()
+            if kwargs:
+                raise ValueError('keyword data not allowed if data was passed.')
+            data = self._parse_data(__data)
         else:
             data = kwargs.copy()
 
