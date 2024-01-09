@@ -1,3 +1,4 @@
+from copy import deepcopy
 from pathlib import Path
 from typing import TypeVar, Any
 
@@ -24,11 +25,9 @@ class TxtData:
         self,
         data: list[DataDict] | None = None,
         delimiter: str = _DEFAULT_DELIMITER,
-        fields: list[str] | None = None,
     ):
         self.data: list[DataDict] = data.copy() if data else []
         self.delimiter: str = delimiter
-        self._original_fields = fields
 
     @property
     def empty(self) -> bool:
@@ -95,6 +94,9 @@ class TxtData:
             data.update({field: None})
         return data
 
+    def copy(self) -> 'TxtData':
+        return deepcopy(self)
+
     def _insert_single_data(self, data: DataDict):
         new_data = self._format_new_data(data)
         data_fields = list(data.keys())
@@ -114,13 +116,15 @@ class TxtData:
 
     def insert(
         self,
-        __data: DataDict | list[DataDict] | None = None,
+        __data: dict[str, Any] | list[dict[str, Any]] | None = None,
         /,
         **kwargs: Any,
     ):
         """Inserts new data into the object"""
         if __data is not None and kwargs:
-            raise ValueError('pass data or keyword data, both are not allowed')
+            raise ValueError('keyword data not allowed if data was passed.')
+        if __data is not None and not isinstance(__data, (dict, list)):
+            raise TypeError('if passed, data must be dict or list of dicts')
 
         if __data is not None:
             data = __data.copy()
@@ -129,10 +133,18 @@ class TxtData:
 
         if isinstance(data, dict):
             self._insert_single_data(data)
-        # elif isinstance(data, list):
         else:
             for single_data in data:
                 self._insert_single_data(single_data)
+
+    def filter(self, **kwargs: Any) -> 'TxtData':
+        filtered_data: list[DataDict] = []
+        for key, value in kwargs.items():
+            filtered_data_by_key: list[DataDict] = [
+                d for d in self.data if d[key] == value
+            ]
+            filtered_data.extend(filtered_data_by_key)
+        return TxtData(data=filtered_data, delimiter=self.delimiter)
 
     def to_txt(self) -> list[str]:
         return self._data_to_txt(self.data, self.delimiter)
