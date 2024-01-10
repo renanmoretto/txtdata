@@ -82,8 +82,19 @@ class TestTxtData(unittest.TestCase):
         ]
 
     def test_insert_dict_of_lists(self):
-        # TODO
-        assert True
+        txt = TxtData()
+        txt.insert(
+            {
+                'A': [123, None, 182],
+                'B': [None, 111, None],
+                'C': [None, None, 'das'],
+            }
+        )
+        assert txt.data == [
+            {'A': 123, 'B': None, 'C': None},
+            {'A': None, 'B': 111, 'C': None},
+            {'A': 182, 'B': None, 'C': 'das'},
+        ]
 
     def test_insert_keyword(self):
         txt = TxtData()
