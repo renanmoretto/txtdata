@@ -9,6 +9,10 @@ _DataDict = dict[str, Any]
 DataLike = dict[str, Any] | list[dict[str, Any]] | dict[str, list[Any]]
 
 
+class ShapeError(Exception):
+    pass
+
+
 class TxtData:
     """
     Properties
@@ -82,13 +86,35 @@ class TxtData:
                 return False
         return True
 
+    @staticmethod
+    def _parse_dict_of_lists(data: dict[str, list[Any]]) -> list[_DataDict]:
+        # Verify length
+        for i, (key, value_list) in enumerate(data.items()):
+            list_len = len(value_list)
+            if i == 0:
+                first_key = key
+                first_list_length = list_len
+                continue
+
+            if list_len != first_list_length:  # type: ignore
+                raise ShapeError(
+                    f'list "{first_key}" has length {first_list_length} '  # type: ignore
+                    f'while list "{key}" has length {list_len}'
+                )
+
+        data_parsed = []
+        fields_on_data = list(data.keys())
+        for field in fields_on_data:
+            ...
+
+        raise NotImplementedError('data as dict os lists not implemented')
+
     def _parse_data(self, data: DataLike) -> list[_DataDict]:
         """Verify data type and return a copy, if valid"""
         if self._is_simple_dict(data):
             return [data].copy()  # type: ignore
         elif self._is_dict_of_lists(data):
-            # TODO
-            raise NotImplementedError('data as dict os lists not implemented')
+            return self._parse_dict_of_lists(data)  # type: ignore
         elif self._is_list_of_dicts(data):
             return data.copy()  # type: ignore
         else:
