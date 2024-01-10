@@ -217,7 +217,7 @@ class TxtData:
     ):
         """
         Inserts new data into the object by a dict, list of dicts
-        or keywords.This is in-place.
+        or keywords. This is in-place.
 
         Example
         -------
