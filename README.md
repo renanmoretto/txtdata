@@ -1,6 +1,6 @@
 # Easy and light manager for basic text data.
 
-TxtData is a Python library designed for basic handling of data in .txt files. This lightweight library, with less than 300 lines of code, offers an easy-to-use API and includes comprehensive, well-written tests.
+TxtData is a Python library designed for basic handling of data in .txt files. This lightweight library, with less than 400 lines of code, offers an easy-to-use API and includes comprehensive, well-written tests.
 
 
 - Simple and intuitive handling of .txt data.
