@@ -10,8 +10,7 @@ _DataLike = dict[str, Any] | list[dict[str, Any]]
 
 
 class TxtData:
-    """Basically, it's a list of dicts.
-
+    """
     Properties
     ----------
         data: list[dict[str, Any]]
@@ -41,6 +40,12 @@ class TxtData:
 
     def __len__(self):
         return len(self.data)
+
+    def __str__(self) -> str:
+        return self.data.__str__()
+
+    def __repr__(self) -> str:
+        return self.data.__repr__()
 
     @staticmethod
     def _parse_data(data: _DataLike) -> _DataLike:
@@ -128,7 +133,13 @@ class TxtData:
         /,
         **kwargs: Any,
     ):
-        """Inserts new data into the object"""
+        """Inserts new data into the object by a dict, list of dicts
+        or keywords.
+
+        Example
+        -------
+
+        """
         if __data is not None:
             if kwargs:
                 raise ValueError('keyword data not allowed if data was passed.')
@@ -143,6 +154,26 @@ class TxtData:
                 self._insert_single_data(single_data)
 
     def filter(self, **kwargs: Any) -> 'TxtData':
+        """
+        Filter data by keyword arguments passed.
+        PS: This is NOT in place.
+
+        Returns
+        -------
+        TxtData
+            A new TxtData instance filtered.
+
+        Examples
+        --------
+            >>> txt = TxtData([
+                {'A': None, 'B': 10, 'C': 50},
+                {'A': 150, 'B': 50, 'C': 39},
+                {'A': 32, 'B': 50, 'C': 2},
+            ])
+            >>> txt_filtered = txt.filter(A=150)
+            ----
+
+        """
         filtered_data: list[_DataDict] = []
         for key, value in kwargs.items():
             filtered_data_by_key: list[_DataDict] = [
@@ -151,10 +182,25 @@ class TxtData:
             filtered_data.extend(filtered_data_by_key)
         return TxtData(data=filtered_data, delimiter=self.delimiter)
 
+    def to_dict(self) -> dict[str, list[Any]]:
+        # TODO
+        ...
+
+    def to_dicts(self) -> list[dict[str, Any]]:
+        # TODO
+        ...
+
     def to_txt(self) -> list[str]:
         return self._data_to_txt(self.data, self.delimiter)
 
     def save(self, path: Path):
+        """
+        Saves the txt file.
+
+        Parameters
+        ----------
+        path : Path
+        """
         if not path.is_file():
             path.parent.mkdir(parents=True, exist_ok=True)
             path.touch(exist_ok=True)
