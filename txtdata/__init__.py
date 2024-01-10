@@ -6,7 +6,7 @@ from typing import Any
 _DEFAULT_DELIMITER = ';'
 
 _DataDict = dict[str, Any]
-_DataLike = dict[str, Any] | list[dict[str, Any]]
+DataLike = dict[str, Any] | list[dict[str, Any]] | dict[str, list[Any]]
 
 
 class TxtData:
@@ -25,7 +25,10 @@ class TxtData:
         data: list[_DataDict] | None = None,
         delimiter: str = _DEFAULT_DELIMITER,
     ):
-        self.data: list[_DataDict] = data.copy() if data else []
+        if data:
+            self.data = self._parse_data(data)
+        else:
+            self.data = []
         self.delimiter: str = delimiter
 
     @property
@@ -48,12 +51,50 @@ class TxtData:
         return self.data.__repr__()
 
     @staticmethod
-    def _parse_data(data: _DataLike) -> _DataLike:
+    def _is_simple_dict(obj: Any) -> bool:
+        if not isinstance(obj, dict):
+            return False
+        for key, value in obj.items():  # type: ignore
+            if not isinstance(key, str) or isinstance(value, list):
+                return False
+        return True
+
+    @staticmethod
+    def _is_list_of_dicts(obj: Any) -> bool:
+        """Verify if obj is list[dict[str, Any]]"""
+        if not isinstance(obj, list):
+            return False
+
+        for item in obj:  # type: ignore
+            if not isinstance(item, dict):
+                return False
+            if all(isinstance(key, str) for key in item):  # type: ignore
+                return True
+        return False
+
+    @staticmethod
+    def _is_dict_of_lists(obj: Any) -> bool:
+        """Verify if obj is dict[str, list[Any]]"""
+        if not isinstance(obj, dict):
+            return False
+        for key, value in obj.items():  # type: ignore
+            if not isinstance(key, str) or not isinstance(value, list):
+                return False
+        return True
+
+    def _parse_data(self, data: DataLike) -> list[_DataDict]:
         """Verify data type and return a copy if valid"""
-        if isinstance(data, (dict, list)):  # type: ignore
-            return data.copy()
+        if self._is_simple_dict(data):
+            return [data].copy()  # type: ignore
+        elif self._is_dict_of_lists(data):
+            # TODO
+            raise NotImplementedError('data as dict os lists not implemented')
+        elif self._is_list_of_dicts(data):
+            return data.copy()  # type: ignore
         else:
-            raise TypeError('data must be a dict, a list of dicts, or None')
+            raise TypeError(
+                'data must be a dict, a list of dicts or dict of [str, list[Any]]'
+            )
 
     @staticmethod
     def _txt_to_dict(
