@@ -180,6 +180,7 @@ class TxtData:
         ]
         for field in missing_fields:
             data.update({field: None})
+        data = dict(sorted(data.items()))
         return data
 
     def copy(self) -> 'TxtData':
@@ -204,7 +205,7 @@ class TxtData:
 
     def insert(
         self,
-        __data: dict[str, Any] | list[dict[str, Any]] | None = None,
+        __data: DataLike | None = None,
         /,
         **kwargs: Any,
     ):
