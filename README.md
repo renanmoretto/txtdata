@@ -42,8 +42,11 @@ print(txt.to_dicts())
 # ]
 
 # Filtering data
-filtered_txt = txt.filter(B=50)
-print(len(filtered_txt))  # Output: 3 (based on your data)
+filtered_txt = txt.filter(A=182)
+print(len(filtered_txt))  # Output: 1 (based on data above)
+
+# Delete
+txt.delete(B=None) # Deletes all data with B equals to None
 
 # Saving
 txt.save('data.txt')

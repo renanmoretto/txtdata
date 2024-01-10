@@ -203,17 +203,35 @@ class TxtData:
 
         self.data.append(new_data)
 
+    def _delete_by_key_value(self, key: str, value: Any):
+        if key not in self.fields:
+            return None
+
+        self.data = [row for row in self.data if row[key] != value]
+
     def insert(
         self,
         __data: DataLike | None = None,
         /,
         **kwargs: Any,
     ):
-        """Inserts new data into the object by a dict, list of dicts
-        or keywords.
+        """
+        Inserts new data into the object by a dict, list of dicts
+        or keywords.This is in-place.
 
         Example
         -------
+            txt = TxtData()
+
+            txt.insert({'A': 123, 'B': 'zzz'}) # Single data by single dict
+
+            txt.insert(A=182, C='asdf') # Single data by keyword
+
+            # Multiple data by list of dicts
+            txt.insert([{'A': None}, {'B': 'zzz', 'C': 'yes'}])
+
+            # Multiple data by dict of lists
+            txt.insert({'A': [1, 3], 'B': ['yyy', 'www']})
 
         """
         if __data is not None:
@@ -229,7 +247,7 @@ class TxtData:
     def filter(self, **kwargs: Any) -> 'TxtData':
         """
         Filter data by keyword arguments passed.
-        PS: This is NOT in place.
+        PS: This is NOT in-place.
 
         Returns
         -------
@@ -254,6 +272,27 @@ class TxtData:
             ]
             filtered_data.extend(filtered_data_by_key)
         return TxtData(data=filtered_data, delimiter=self.delimiter)
+
+    def delete(self, **kwargs: Any):
+        """
+        Deletes data found by keyword args.
+        This is in-place.
+
+        Examples
+        --------
+            data = {'a': [1, 2, 3], 'c': [0, 0, 0], 'b': ['x', 'y', 'z']}
+            txt = TxtData(data)
+            txt.delete(a=1, b='y')
+            print(txt) # Output: [{'a': 3, 'c': 0, 'b': 'z'}]
+
+        """
+        # Prob should remove this to avoid errors?
+        for kw_field in kwargs.keys():
+            if kw_field not in self.fields:
+                raise ValueError(f'field "{kw_field}" not in data')
+
+        for key_del, value_del in kwargs.items():
+            self._delete_by_key_value(key_del, value_del)
 
     def to_dict(self) -> dict[str, list[Any]]:
         # TODO
