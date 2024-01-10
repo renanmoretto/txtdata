@@ -37,14 +37,14 @@ class TestTxtData(unittest.TestCase):
         txt = TxtData(list_of_dicts)
         assert txt.data == list_of_dicts
 
-    # def test_creation_dict_of_lists(self):
-    #     data = {'A': [1, 2, 3], 'B': ['x', 'y', None]}
-    #     txt = TxtData(data)
-    #     assert txt.data == [
-    #         {'A': 1, 'B': 'x'},
-    #         {'A': 2, 'B': 'y'},
-    #         {'A': 3, 'B': None},
-    #     ]
+    def test_creation_dict_of_lists(self):
+        data = {'A': [1, 2, 3], 'B': ['x', 'y', None]}
+        txt = TxtData(data)
+        assert txt.data == [
+            {'A': 1, 'B': 'x'},
+            {'A': 2, 'B': 'y'},
+            {'A': 3, 'B': None},
+        ]
 
     def test_creation_dict_of_lists_wrong_shape(self):
         # This must raise a ShapeError

@@ -102,12 +102,15 @@ class TxtData:
                     f'while list "{key}" has length {list_len}'
                 )
 
-        data_parsed = []
-        fields_on_data = list(data.keys())
-        for field in fields_on_data:
-            ...
+        data_fields = list(data.keys())
+        data_lists = list(data.values())
 
-        raise NotImplementedError('data as dict os lists not implemented')
+        data_parsed: list[_DataDict] = []
+        for tup in zip(*data_lists):
+            _dict = {k: v for k, v in zip(data_fields, tup)}
+            data_parsed.append(_dict)
+
+        return data_parsed.copy()
 
     def _parse_data(self, data: DataLike) -> list[_DataDict]:
         """Verify data type and return a copy, if valid"""
