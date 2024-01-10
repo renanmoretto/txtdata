@@ -21,6 +21,22 @@ class TestTxtData(unittest.TestCase):
         txt = TxtData()
         assert txt.empty
 
+    def test_creation_simple_dict(self):
+        txt = TxtData({'A': 123, 'B': 11})
+        assert txt.data == [{'A': 123, 'B': 11}]
+
+    def test_creation_list_of_dicts(self):
+        list_of_dicts = [
+            {'A': 10, 'B': 50, 'C': 'asd'},
+            {'A': None, 'B': 10, 'C': 50},
+            {'A': 150, 'B': 50, 'C': 39},
+            {'A': 123, 'B': 33, 'C': 12},
+            {'A': 55, 'B': None, 'C': 44},
+            {'A': 32, 'B': 50, 'C': 2},
+        ]
+        txt = TxtData(list_of_dicts)
+        assert txt.data == list_of_dicts
+
     def test_len(self):
         data = _random_sample(50)
         txt = TxtData(data)
@@ -50,6 +66,10 @@ class TestTxtData(unittest.TestCase):
             {'A': None, 'B': 111, 'C': None},
             {'A': 182, 'B': None, 'C': 'das'},
         ]
+
+    def test_insert_dict_of_lists(self):
+        # TODO
+        assert True
 
     def test_insert_keyword(self):
         txt = TxtData()

@@ -22,7 +22,7 @@ class TxtData:
 
     def __init__(
         self,
-        data: list[_DataDict] | None = None,
+        data: DataLike | None = None,
         delimiter: str = _DEFAULT_DELIMITER,
     ):
         if data:
@@ -83,7 +83,7 @@ class TxtData:
         return True
 
     def _parse_data(self, data: DataLike) -> list[_DataDict]:
-        """Verify data type and return a copy if valid"""
+        """Verify data type and return a copy, if valid"""
         if self._is_simple_dict(data):
             return [data].copy()  # type: ignore
         elif self._is_dict_of_lists(data):
