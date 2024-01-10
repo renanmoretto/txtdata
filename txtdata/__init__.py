@@ -187,8 +187,7 @@ class TxtData:
         ...
 
     def to_dicts(self) -> list[dict[str, Any]]:
-        # TODO
-        ...
+        return self.data
 
     def save(self, path: Path):
         """
