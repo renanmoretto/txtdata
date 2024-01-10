@@ -126,7 +126,20 @@ class TestTxtData(unittest.TestCase):
         assert len(filtered_txt) == 3
 
     def test_delete(self):
-        assert True
+        data = [
+            {'A': 10, 'B': 50, 'C': 'asd'},
+            {'A': None, 'B': 10, 'C': 50},
+            {'A': 150, 'B': 50, 'C': 39},
+            {'A': 123, 'B': 33, 'C': 12},
+            {'A': 55, 'B': None, 'C': 44},
+            {'A': 32, 'B': 50, 'C': 2},
+        ]
+        txt = TxtData(data)
+        txt.delete(A=None, B=50)
+        assert txt.data == [
+            {'A': 123, 'B': 33, 'C': 12},
+            {'A': 55, 'B': None, 'C': 44},
+        ]
 
     def test_to_dicts(self):
         data = _random_sample()
