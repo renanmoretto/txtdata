@@ -124,3 +124,8 @@ class TestTxtData(unittest.TestCase):
         txt = TxtData(data)
         filtered_txt = txt.filter(B=50)
         assert len(filtered_txt) == 3
+
+    def test_to_dicts(self):
+        data = _random_sample()
+        txt = TxtData(data)
+        assert txt.to_dicts() == data

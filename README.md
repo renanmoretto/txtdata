@@ -31,7 +31,7 @@ txt.insert({'A': 123, 'B': 'zzz'})  # single data by single dict
 txt.insert(A=182, C='asdf')  # single data by keyword
 txt.insert([{'A': None}, {'B': 'zzz', 'C': 'yes'}])  # multiple data by list of dicts
 txt.insert({'A': [1, 3], 'B': ['yyy', 'www']})  # multiple data by dict of lists
-print(txt.data)
+print(txt.to_dicts())
 # Output: [
 #     {'A': 123, 'B': 'zzz', 'C': None},
 #     {'A': 182, 'B': None, 'C': 'asdf'},
