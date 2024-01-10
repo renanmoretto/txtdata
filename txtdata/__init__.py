@@ -45,6 +45,11 @@ class TxtData:
             return []
         return list(self.data[0].keys())
 
+    def __eq__(self, other: object) -> bool:
+        if isinstance(other, TxtData):
+            return self.data == other.data
+        return False
+
     def __len__(self):
         return len(self.data)
 

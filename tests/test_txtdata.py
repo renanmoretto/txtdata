@@ -51,6 +51,12 @@ class TestTxtData(unittest.TestCase):
         data = {'A': [1, 2, 3], 'B': ['x', 'y']}
         self.assertRaises(ShapeError, TxtData, data)
 
+    def test_eq(self):
+        data = {'A': [1, 2, 3], 'B': ['x', 'y', None]}
+        txt1 = TxtData(data)
+        txt2 = TxtData(data)
+        assert txt1 == txt2
+
     def test_len(self):
         data = _random_sample(50)
         txt = TxtData(data)
