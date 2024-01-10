@@ -262,7 +262,7 @@ class TxtData:
     def to_dicts(self) -> list[dict[str, Any]]:
         return self.data
 
-    def save(self, path: Path):
+    def save(self, path: str | Path, delimiter: str = ';'):
         """
         Saves the txt file.
 
@@ -270,10 +270,15 @@ class TxtData:
         ----------
         path : Path
         """
+        if not isinstance(delimiter, str):  # type: ignore
+            raise TypeError('delimiter must be str')
+        if isinstance(path, str):
+            path = Path(path)
+
         if not path.is_file():
             path.parent.mkdir(parents=True, exist_ok=True)
             path.touch(exist_ok=True)
 
-        txt_data = self._data_to_txt(self.data, self.delimiter)
+        txt_data = self._data_to_txt(self.data, delimiter)
         with open(path, 'w') as file:
             file.writelines(txt_data)

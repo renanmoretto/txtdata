@@ -44,4 +44,7 @@ print(txt.data)
 # Filtering data
 filtered_txt = txt.filter(B=50)
 print(len(filtered_txt))  # Output: 3 (based on your data)
+
+# Saving
+txt.save('data.txt')
 ```
