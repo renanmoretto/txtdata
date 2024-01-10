@@ -49,5 +49,15 @@ print(len(filtered_txt))  # Output: 1 (based on data above)
 txt.delete(B=None) # Deletes all data with B equals to None
 
 # Saving
-txt.save('data.txt')
+txt.save('data.txt', delimiter=';')
+# txt file:
+# A;B;C
+# 123;zzz;
+# 182;;asdf
+# ;;
+# ;zzz;yes
+# 1;yyy;
+# 3;www;
+
+
 ```
