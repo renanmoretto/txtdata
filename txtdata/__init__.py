@@ -171,8 +171,8 @@ class TxtData:
                 {'A': 32, 'B': 50, 'C': 2},
             ])
             >>> txt_filtered = txt.filter(A=150)
-            ----
-
+            >>> print(txt_filtered)
+            [{'A': 150, 'B': 50, 'C': 39}]
         """
         filtered_data: list[_DataDict] = []
         for key, value in kwargs.items():
@@ -189,9 +189,6 @@ class TxtData:
     def to_dicts(self) -> list[dict[str, Any]]:
         # TODO
         ...
-
-    def to_txt(self) -> list[str]:
-        return self._data_to_txt(self.data, self.delimiter)
 
     def save(self, path: Path):
         """
