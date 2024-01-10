@@ -89,19 +89,19 @@ class TxtData:
     @staticmethod
     def _parse_dict_of_lists(data: dict[str, list[Any]]) -> list[_DataDict]:
         # Verify length
-        for i, (key, value_list) in enumerate(data.items()):
-            list_len = len(value_list)
-            if i == 0:
-                first_key = key
-                first_list_length = list_len
-                continue
-
-            if list_len != first_list_length:  # type: ignore
+        key_lenghts = [{k: len(v)} for k, v in data.items()]
+        first_dict = key_lenghts[0]
+        first_key = list(first_dict.keys())[0]
+        first_length = first_dict[first_key]
+        for key, value_list in data.items():
+            value_len = len(value_list)
+            if value_len != first_length:
                 raise ShapeError(
-                    f'list "{first_key}" has length {first_list_length} '  # type: ignore
-                    f'while list "{key}" has length {list_len}'
+                    f'list "{first_key}" has length {first_length} '
+                    f'while list "{key}" has length {value_len}'
                 )
 
+        # Transform data
         data_fields = list(data.keys())
         data_lists = list(data.values())
 
@@ -214,14 +214,11 @@ class TxtData:
             if kwargs:
                 raise ValueError('keyword data not allowed if data was passed.')
             data = self._parse_data(__data)
-        else:
-            data = kwargs.copy()
-
-        if isinstance(data, dict):
-            self._insert_single_data(data)
-        else:
             for single_data in data:
                 self._insert_single_data(single_data)
+        else:
+            data = kwargs.copy()
+            self._insert_single_data(data)
 
     def filter(self, **kwargs: Any) -> 'TxtData':
         """
