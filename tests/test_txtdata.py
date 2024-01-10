@@ -47,7 +47,6 @@ class TestTxtData(unittest.TestCase):
         ]
 
     def test_creation_dict_of_lists_wrong_shape(self):
-        # This must raise a ShapeError
         data = {'A': [1, 2, 3], 'B': ['x', 'y']}
         self.assertRaises(ShapeError, TxtData, data)
 
