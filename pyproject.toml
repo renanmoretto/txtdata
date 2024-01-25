@@ -1,9 +1,10 @@
 [tool.poetry]
 name = "txtdata"
-version = "0.1.0"
+version = "0.1.1"
 description = ""
 authors = ["renanmoretto <himynameisrenan@outlook.com>"]
 readme = "README.md"
+include = ["txtdata/py.typed"]
 
 [tool.poetry.dependencies]
 python = "^3.10"
