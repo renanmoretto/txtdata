@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from copy import deepcopy
 from pathlib import Path
 from typing import Any
@@ -59,7 +61,7 @@ class TxtData:
     def __repr__(self) -> str:
         return self.data.__repr__()
 
-    def __add__(self, other: 'TxtData') -> 'TxtData':
+    def __add__(self, other: TxtData) -> TxtData:
         new_txt = TxtData(self.data)
         new_txt.insert(other.data)
         return new_txt
@@ -167,7 +169,7 @@ class TxtData:
     @classmethod
     def from_path(
         cls, path: Path, delimiter: str = _DEFAULT_DELIMITER
-    ) -> 'TxtData':
+    ) -> TxtData:
         if path.suffix != '.txt':
             raise ValueError('Path suffix must be .txt')
 
@@ -188,7 +190,7 @@ class TxtData:
         data = dict(sorted(data.items()))
         return data
 
-    def copy(self) -> 'TxtData':
+    def copy(self) -> TxtData:
         return deepcopy(self)
 
     def _insert_single_data(self, data: _DataDict):
@@ -249,7 +251,7 @@ class TxtData:
             data = kwargs.copy()
             self._insert_single_data(data)
 
-    def filter(self, **kwargs: Any) -> 'TxtData':
+    def filter(self, **kwargs: Any) -> TxtData:
         """
         Filter data by keyword arguments using 'OR' logic.
         PS: This is NOT in-place.
