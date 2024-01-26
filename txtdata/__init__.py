@@ -2,13 +2,15 @@ from __future__ import annotations
 
 from copy import deepcopy
 from pathlib import Path
-from typing import Any
+from typing import Any, TypeAlias
 
 
 _DEFAULT_DELIMITER = ';'
 
-_DataDict = dict[str, Any]
-DataLike = dict[str, Any] | list[dict[str, Any]] | dict[str, list[Any]]
+_DataDict: TypeAlias = dict[str, Any]
+DataLike: TypeAlias = (
+    dict[str, Any] | list[dict[str, Any]] | dict[str, list[Any]]
+)
 
 
 class ShapeError(Exception):
@@ -46,6 +48,9 @@ class TxtData:
         if self.empty:
             return []
         return list(self.data[0].keys())
+
+    def __bool__(self) -> bool:
+        return bool(self.data)
 
     def __eq__(self, other: object) -> bool:
         if isinstance(other, TxtData):
@@ -253,8 +258,11 @@ class TxtData:
 
     def filter(self, **kwargs: Any) -> TxtData:
         """
-        Filter data by keyword arguments using 'OR' logic.
-        PS: This is NOT in-place.
+        Filter data by keyword arguments using 'AND' logic.
+        This is NOT in-place.
+
+        TIP: If you want to use 'OR' logic, you can filter separately
+        and add after.
 
         Returns
         -------
@@ -272,7 +280,7 @@ class TxtData:
             >>> print(txt_filtered)
             [{'A': 150, 'B': 50, 'C': 39}]
 
-            For multiple key words, it uses 'OR' logic:
+            For multiple key words, it uses 'AND' logic:
             >>> txt = TxtData([
                 {'A': None, 'B': 10, 'C': 50},
                 {'A': 150, 'B': 50, 'C': 39},
@@ -280,14 +288,16 @@ class TxtData:
             ])
             >>> txt_filtered = txt.filter(A=150, B=10)
             >>> print(txt_filtered)
-            [{'A': 150, 'B': 50, 'C': 39}, {'A': None, 'B': 10, 'C': 50}]
+            []
         """
         filtered_data: list[_DataDict] = []
-        for key, value in kwargs.items():
-            filtered_data_by_key: list[_DataDict] = [
-                d for d in self.data if d[key] == value
-            ]
-            filtered_data.extend(filtered_data_by_key)
+        for single_data in self.data:
+            for key, value in kwargs.items():
+                data_key_value = single_data.get(key)
+                if data_key_value != value:
+                    break
+            else:
+                filtered_data.append(single_data)
         return TxtData(data=filtered_data, delimiter=self.delimiter)
 
     def delete(self, **kwargs: Any):

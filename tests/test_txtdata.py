@@ -50,6 +50,12 @@ class TestTxtData(unittest.TestCase):
         data = {'A': [1, 2, 3], 'B': ['x', 'y']}
         self.assertRaises(ShapeError, TxtData, data)
 
+    def test_bool(self):
+        assert TxtData({'A': [1, 2, 3]})
+
+    def test_bool_empty(self):
+        assert not TxtData()
+
     def test_eq(self):
         data = {'A': [1, 2, 3], 'B': ['x', 'y', None]}
         txt1 = TxtData(data)
@@ -132,6 +138,7 @@ class TestTxtData(unittest.TestCase):
         ]
         txt = TxtData(data)
         filtered_txt = txt.filter(B=50)
+        assert filtered_txt
         assert len(filtered_txt) == 3
 
     def test_filter_mult_arg(self):
@@ -143,7 +150,9 @@ class TestTxtData(unittest.TestCase):
 
         txt = TxtData(data)
         filtered_txt = txt.filter(A=150, B=10)
-        assert len(filtered_txt) == 2
+        assert not filtered_txt
+        assert filtered_txt.data == []
+        assert len(filtered_txt) == 0
 
     def test_delete(self):
         data = [
