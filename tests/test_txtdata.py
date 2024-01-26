@@ -61,6 +61,15 @@ class TestTxtData(unittest.TestCase):
         txt = TxtData(data)
         assert len(txt) == 50
 
+    def test_add(self):
+        txt1 = TxtData([{'A': 123, 'B': 111}])
+        txt2 = TxtData([{'A': 182, 'C': 'das'}])
+        txt = txt1 + txt2
+        assert txt.data == [
+            {'A': 123, 'B': 111, 'C': None},
+            {'A': 182, 'B': None, 'C': 'das'},
+        ]
+
     def test_fields(self):
         data = _random_sample(50)
         txt = TxtData(data)
@@ -112,7 +121,7 @@ class TestTxtData(unittest.TestCase):
             {'A': 182, 'B': None, 'C': 'das'},
         ]
 
-    def test_filter(self):
+    def test_filter_single_arg(self):
         data = [
             {'A': 10, 'B': 50, 'C': 'asd'},
             {'A': None, 'B': 10, 'C': 50},
@@ -124,6 +133,17 @@ class TestTxtData(unittest.TestCase):
         txt = TxtData(data)
         filtered_txt = txt.filter(B=50)
         assert len(filtered_txt) == 3
+
+    def test_filter_mult_arg(self):
+        data = [
+            {'A': None, 'B': 10, 'C': 50},
+            {'A': 150, 'B': 50, 'C': 39},
+            {'A': 32, 'B': 50, 'C': 2},
+        ]
+
+        txt = TxtData(data)
+        filtered_txt = txt.filter(A=150, B=10)
+        assert len(filtered_txt) == 2
 
     def test_delete(self):
         data = [

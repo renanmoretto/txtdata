@@ -59,6 +59,11 @@ class TxtData:
     def __repr__(self) -> str:
         return self.data.__repr__()
 
+    def __add__(self, other: 'TxtData') -> 'TxtData':
+        new_txt = TxtData(self.data)
+        new_txt.insert(other.data)
+        return new_txt
+
     @staticmethod
     def _is_simple_dict(obj: Any) -> bool:
         if not isinstance(obj, dict):
@@ -246,7 +251,7 @@ class TxtData:
 
     def filter(self, **kwargs: Any) -> 'TxtData':
         """
-        Filter data by keyword arguments passed.
+        Filter data by keyword arguments using 'OR' logic.
         PS: This is NOT in-place.
 
         Returns
@@ -264,6 +269,16 @@ class TxtData:
             >>> txt_filtered = txt.filter(A=150)
             >>> print(txt_filtered)
             [{'A': 150, 'B': 50, 'C': 39}]
+
+            For multiple key words, it uses 'OR' logic:
+            >>> txt = TxtData([
+                {'A': None, 'B': 10, 'C': 50},
+                {'A': 150, 'B': 50, 'C': 39},
+                {'A': 32, 'B': 50, 'C': 2},
+            ])
+            >>> txt_filtered = txt.filter(A=150, B=10)
+            >>> print(txt_filtered)
+            [{'A': 150, 'B': 50, 'C': 39}, {'A': None, 'B': 10, 'C': 50}]
         """
         filtered_data: list[_DataDict] = []
         for key, value in kwargs.items():
